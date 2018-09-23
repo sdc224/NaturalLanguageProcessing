@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using IronPython.Hosting;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace PresentationLayer
 {
@@ -23,6 +13,28 @@ namespace PresentationLayer
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        public void ChangeImage(Button button)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ButtonMic1On_Click(object sender, RoutedEventArgs e)
+        {
+            var py = Python.CreateEngine();
+
+            try
+            {
+                //MessageBox.Show(py.Execute("print('Hello World')"));
+                var p = py.Execute("2+3");
+                MessageBox.Show(p.ToString());
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.ToString());
+                throw;
+            }
         }
     }
 }

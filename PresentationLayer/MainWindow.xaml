@@ -59,6 +59,7 @@
                 </Button>
             </StackPanel>
         </StackPanel>
+        <Button x:Name="ButtonStop" Content="Stop" HorizontalAlignment="Left" Margin="367,44,0,0" VerticalAlignment="Top" Width="75" Click="ButtonStop_OnClick"/>
 
     </Grid>
 </Window>

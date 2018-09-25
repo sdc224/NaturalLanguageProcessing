@@ -207,6 +207,7 @@ namespace PresentationLayer
 
         private void ButtonMicConvert_OnClick(object sender, RoutedEventArgs e)
         {
+            ButtonMic1Convert.IsEnabled = false;
             if (File.Exists(@"D:\Games\audio.wav"))
             {
                 using (var recognizer = new SpeechRecognitionEngine(new CultureInfo("en-GB")))
@@ -223,7 +224,10 @@ namespace PresentationLayer
                     _completed = false;
                     recognizer.RecognizeAsync(RecognizeMode.Multiple);
 
-                    ButtonMic1Convert.IsEnabled = false;
+                    while (!_completed)
+                        MessageBox.Show("Working...Wait");
+
+                    MessageBox.Show("Done :)");
                 }
             }
 
@@ -235,7 +239,7 @@ namespace PresentationLayer
 
         private static void RecognizerOnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            const string fileName = @"D:\text.txt";
+            var fileName = @"D:\text.txt";
 
             try
             {
@@ -278,7 +282,7 @@ namespace PresentationLayer
             }
             if (e.InputStreamEnded)
             {
-                MessageBox.Show("End of file adding.");
+                MessageBox.Show("End of stream encountered.");
             }
             _completed = true;
         }

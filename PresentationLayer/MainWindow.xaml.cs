@@ -223,6 +223,11 @@ namespace PresentationLayer
                     _completed = false;
                     recognizer.RecognizeAsync(RecognizeMode.Multiple);
 
+                    while (!_completed)
+                        MessageBox.Show("Working...Wait");
+
+                    MessageBox.Show("Done :)");
+
                     ButtonMic1Convert.IsEnabled = false;
                 }
             }

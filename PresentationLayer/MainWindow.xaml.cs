@@ -21,11 +21,6 @@ namespace PresentationLayer
             mciSendString("open new Type waveaudio Alias recsound", null, 0, IntPtr.Zero);
         }
 
-        public void ChangeImage(Button button)
-        {
-            throw new NotImplementedException();
-        }
-
         private void ButtonStartOn_Click(object sender, RoutedEventArgs e)
         {
             if (!(sender is Button button)) return;
@@ -142,6 +137,11 @@ namespace PresentationLayer
                 default:
                     throw new InvalidOperationException("Invalid Button selected");
             }
+        }
+
+        private void ButtonMicConvert_OnClick(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }

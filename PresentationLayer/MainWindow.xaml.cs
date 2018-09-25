@@ -239,7 +239,7 @@ namespace PresentationLayer
 
         private static void RecognizerOnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            var fileName = @"D:\text.txt";
+            const string fileName = @"D:\text.txt";
 
             try
             {

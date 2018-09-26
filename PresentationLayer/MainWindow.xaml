@@ -22,7 +22,7 @@
                 <Button x:Name="ButtonMic1Off" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
                     <Image Source="Images/MicrophoneOff.png"/>
                 </Button>
-                <Button x:Name="ButtonMic1Convert" Width="61" Margin="5,10,10,9.667" Cursor="Hand" IsEnabled="False" Click="ButtonMicConvert_OnClick">
+                <Button x:Name="ButtonMic1Convert" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
                     <Image Source="Images/Save.png"></Image>
                 </Button>
             </StackPanel>

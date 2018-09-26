@@ -1,8 +1,7 @@
 ﻿using NAudio.Wave;
 using System;
-using System.Globalization;
+using System.Diagnostics;
 using System.IO;
-using System.Speech.Recognition;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -13,13 +12,7 @@ namespace PresentationLayer
     /// </summary>
     public partial class MainWindow : Window
     {
-        /*[DllImport("winmm.dll")]
-        private static extern long mciSendString(string command, StringBuilder retString, int returnLength,
-            IntPtr callBack);*/
 
-        private static bool _completed;
-
-        private BufferedWaveProvider _bwp;
         private WaveIn _waveIn;
         private WaveOut _waveOut;
         private WaveFileWriter _writer;
@@ -33,47 +26,43 @@ namespace PresentationLayer
             _waveIn = new WaveIn();
 
             _waveIn.DataAvailable += WaveIn_DataAvailable;
-            _waveIn.WaveFormat = new WaveFormat(16000, 1);
+            _waveIn.WaveFormat = new WaveFormat(44100, 1);
 
-            _bwp = new BufferedWaveProvider(_waveIn.WaveFormat) { DiscardOnBufferOverflow = true };
+            /*_bwp = new BufferedWaveProvider(_waveIn.WaveFormat)
+            {
+                BufferDuration = TimeSpan.MaxValue,
+                DiscardOnBufferOverflow = true
+            };*/
 
             //mciSendString("open new Type waveaudio Alias recsound", null, 0, IntPtr.Zero);
         }
 
         private void WaveIn_DataAvailable(object sender, WaveInEventArgs e)
         {
-            _bwp.AddSamples(e.Buffer, 0, e.BytesRecorded);
+            if (_writer == null)
+                return;
+
+            _writer.Write(e.Buffer, 0, e.BytesRecorded);
+            _writer.Flush();
+
         }
 
         private void ButtonStartOn_Click(object sender, RoutedEventArgs e)
         {
             if (!(sender is Button button)) return;
-            /*var py = Python.CreateEngine();
-
-            try
-            {
-                //MessageBox.Show(py.Execute("print('Hello World')"));
-                var p = py.Execute("2+3");
-                MessageBox.Show(p.ToString());
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show(exception.Message);
-                throw;
-            }*/
-
-            //mciSendString("record recsound", null, 0, IntPtr.Zero);
 
             _waveOut = new WaveOut();
-            _waveIn = new WaveIn();
+            _waveIn = new WaveIn { WaveFormat = new WaveFormat(44100, 1) };
 
             _waveIn.DataAvailable += WaveIn_DataAvailable;
-            _waveIn.WaveFormat = new WaveFormat(16000, 1);
-
-            _bwp = new BufferedWaveProvider(_waveIn.WaveFormat) { DiscardOnBufferOverflow = true };
 
             if (WaveIn.DeviceCount < 1)
                 throw new InvalidOperationException("No microphone");
+
+            if (File.Exists(@"D:\Games\audio.wav"))
+                File.Delete(@"D:\Games\audio.wav");
+
+            _writer = new WaveFileWriter(Output, _waveIn.WaveFormat);
 
             _waveIn.StartRecording();
 
@@ -126,16 +115,10 @@ namespace PresentationLayer
 
         private void ButtonStop_OnClick(object sender, RoutedEventArgs e)
         {
-            /*mciSendString("save recsound d:\\Games\\mic.wav", null, 0, IntPtr.Zero);
-            mciSendString("close recSound", null, 0, IntPtr.Zero);*/
             if (!(sender is Button button)) return;
 
             _waveIn.StopRecording();
 
-            if (File.Exists(@"D:\Games\audio.wav"))
-                File.Delete(@"D:\Games\audio.wav");
-
-            _writer = new WaveFileWriter(Output, _waveIn.WaveFormat);
 
             switch (button.Name)
             {
@@ -184,17 +167,6 @@ namespace PresentationLayer
                     throw new InvalidOperationException("Invalid Button selected");
             }
 
-            var buffer = new byte[_bwp.BufferLength];
-            const int offset = 0;
-            var count = _bwp.BufferLength;
-
-            var read = _bwp.Read(buffer, offset, count);
-
-            if (count > 0)
-            {
-                _writer.Write(buffer, offset, read);
-            }
-
             _waveIn.Dispose();
             _waveIn = null;
             _writer.Close();
@@ -217,27 +189,27 @@ namespace PresentationLayer
         {
             if (File.Exists(@"D:\Games\audio.wav"))
             {
-                using (var recognizer = new SpeechRecognitionEngine(new CultureInfo("en-GB")))
+                try
                 {
-                    // Create and Load Grammar
-                    var dictation = new DictationGrammar();
-                    recognizer.LoadGrammar(dictation);
-
-                    // Configure the input
-                    recognizer.SetInputToWaveFile(@"D:\Games\audio.wav");
-                    recognizer.SpeechRecognized += RecognizerOnSpeechRecognized;
-                    recognizer.RecognizeCompleted += Recognizer_RecognizeCompleted;
-
-                    _completed = false;
-                    recognizer.RecognizeAsync(RecognizeMode.Multiple);
-
-                    while (!_completed)
-                        MessageBox.Show("Working...Wait");
-
-                    MessageBox.Show("Done :)");
-
-                    ButtonMic1Convert.IsEnabled = false;
+                    const string fileName = @"C:\Users\souro\source\repos\audiototxt.py";
+                    const string path = @"C:\Users\souro\AppData\Local\Programs\Python\Python37-32\python.exe";
+                    RunCmd(path, fileName);
                 }
+
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    throw;
+                }
+
+                //_completed = false;
+
+                //while (!_completed)
+                //    MessageBox.Show("Working...Wait");
+
+                MessageBox.Show("Done :)");
+
+                ButtonMic1Convert.IsEnabled = false;
             }
 
             else
@@ -246,7 +218,53 @@ namespace PresentationLayer
             }
         }
 
-        private static void RecognizerOnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        private static void RunCmd(string cmd, string args)
+        {
+            var start = new ProcessStartInfo
+            {
+                FileName = cmd,             //cmd is full path to python.exe
+                Arguments = args,           //args is path to .py file and any cmd line args
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true,
+                UserName = string.Empty,
+                Password = null
+            };
+
+            using (var process = Process.Start(start))
+            {
+                if (process == null) return;
+                using (var reader = process.StandardOutput)
+                {
+                    var result = reader.ReadToEnd();
+                    const string fileName = @"D:\text.txt";
+
+                    try
+                    {
+                        // Check if file already exists. If yes, delete it. 
+                        if (File.Exists(fileName))
+                        {
+                            File.Delete(fileName);
+                        }
+
+                        // Create a new file 
+                        using (var sw = File.CreateText(fileName))
+                        {
+                            sw.WriteAsync(result + " ");
+                        }
+
+                        //_completed = true;
+                    }
+
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
+                }
+            }
+        }
+
+        /*private static void RecognizerOnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
             const string fileName = @"D:\text.txt";
 
@@ -294,6 +312,6 @@ namespace PresentationLayer
                 MessageBox.Show("End of file adding.");
             }
             _completed = true;
-        }
+        }*/
     }
 }

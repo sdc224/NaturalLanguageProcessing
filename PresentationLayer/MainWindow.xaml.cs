@@ -19,9 +19,9 @@ namespace PresentationLayer
 
         private static bool _completed;
 
-        private readonly BufferedWaveProvider _bwp;
+        private BufferedWaveProvider _bwp;
         private WaveIn _waveIn;
-        private readonly WaveOut _waveOut;
+        private WaveOut _waveOut;
         private WaveFileWriter _writer;
         private WaveFileReader _reader;
         private const string Output = @"D:\Games\audio.wav";
@@ -63,6 +63,14 @@ namespace PresentationLayer
             }*/
 
             //mciSendString("record recsound", null, 0, IntPtr.Zero);
+
+            _waveOut = new WaveOut();
+            _waveIn = new WaveIn();
+
+            _waveIn.DataAvailable += WaveIn_DataAvailable;
+            _waveIn.WaveFormat = new WaveFormat(16000, 1);
+
+            _bwp = new BufferedWaveProvider(_waveIn.WaveFormat) { DiscardOnBufferOverflow = true };
 
             if (WaveIn.DeviceCount < 1)
                 throw new InvalidOperationException("No microphone");

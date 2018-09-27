@@ -17,7 +17,8 @@ namespace PresentationLayer
         private WaveOut _waveOut;
         private WaveFileWriter _writer;
         private WaveFileReader _reader;
-        private const string Output = @"D:\Games\audio.wav";
+        private static readonly string UserPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        private static readonly string Output = $@"{UserPath}\AppData\Local\Temp\audio.wav";
 
         public MainWindow()
         {
@@ -27,14 +28,6 @@ namespace PresentationLayer
 
             _waveIn.DataAvailable += WaveIn_DataAvailable;
             _waveIn.WaveFormat = new WaveFormat(44100, 1);
-
-            /*_bwp = new BufferedWaveProvider(_waveIn.WaveFormat)
-            {
-                BufferDuration = TimeSpan.MaxValue,
-                DiscardOnBufferOverflow = true
-            };*/
-
-            //mciSendString("open new Type waveaudio Alias recsound", null, 0, IntPtr.Zero);
         }
 
         private void WaveIn_DataAvailable(object sender, WaveInEventArgs e)
@@ -59,8 +52,8 @@ namespace PresentationLayer
             if (WaveIn.DeviceCount < 1)
                 throw new InvalidOperationException("No microphone");
 
-            if (File.Exists(@"D:\Games\audio.wav"))
-                File.Delete(@"D:\Games\audio.wav");
+            if (File.Exists($@"{UserPath}\AppData\Local\Temp\audio.wav"))
+                File.Delete($@"{UserPath}\AppData\Local\Temp\audio.wav");
 
             _writer = new WaveFileWriter(Output, _waveIn.WaveFormat);
 
@@ -172,7 +165,7 @@ namespace PresentationLayer
             _writer.Close();
             _writer = null;
 
-            _reader = new WaveFileReader(@"D:\Games\audio.wav");
+            _reader = new WaveFileReader($@"{UserPath}\AppData\Local\Temp\audio.wav");
             _waveOut.Init(_reader);
             _waveOut.PlaybackStopped += WaveOut_PlaybackStopped;
             _waveOut.Play();
@@ -187,13 +180,21 @@ namespace PresentationLayer
 
         private void ButtonMicConvert_OnClick(object sender, RoutedEventArgs e)
         {
-            if (File.Exists(@"D:\Games\audio.wav"))
+            var argument = $@" {UserPath}\AppData\Local\Temp\audio.wav";
+
+            var files = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            var fileName = @"C:\Users\souro\source\repos\audiototxt.py" + argument;
+
+            const string path = @"C:\Users\souro\AppData\Local\Programs\Python\Python37-32\python.exe";
+
+            var window = new ResultPage();
+
+            if (File.Exists($@"{UserPath}\AppData\Local\Temp\audio.wav"))
             {
                 try
                 {
-                    const string fileName = @"C:\Users\souro\source\repos\audiototxt.py";
-                    const string path = @"C:\Users\souro\AppData\Local\Programs\Python\Python37-32\python.exe";
-                    RunCmd(path, fileName);
+                    RunCmd(path, fileName, window);
                 }
 
                 catch (Exception ex)
@@ -209,6 +210,9 @@ namespace PresentationLayer
 
                 MessageBox.Show("Done :)");
 
+                window.Owner = this;
+                window.ShowDialog();
+                //Hide();
                 ButtonMic1Convert.IsEnabled = false;
             }
 
@@ -218,7 +222,7 @@ namespace PresentationLayer
             }
         }
 
-        private static void RunCmd(string cmd, string args)
+        private static void RunCmd(string cmd, string args, ResultPage window)
         {
             var start = new ProcessStartInfo
             {
@@ -237,7 +241,10 @@ namespace PresentationLayer
                 using (var reader = process.StandardOutput)
                 {
                     var result = reader.ReadToEnd();
-                    const string fileName = @"D:\text.txt";
+
+                    window.RichTextBox.AppendText(result);
+
+                    var fileName = $@"{UserPath}\AppData\Local\Temp\text.txt";
 
                     try
                     {
@@ -250,7 +257,7 @@ namespace PresentationLayer
                         // Create a new file 
                         using (var sw = File.CreateText(fileName))
                         {
-                            sw.WriteAsync(result + " ");
+                            sw.Write(result + " ");
                         }
 
                         //_completed = true;

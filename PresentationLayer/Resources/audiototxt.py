@@ -1,17 +1,12 @@
-"""import speech_recognition as sr
-r=sr.Recognizer() 
-AUDIO_FILE = ("Shawn Mendes - Because I Had You.wav")
-with sr.AudioFile(AUDIO_FILE) as source: 
-    print("Listening:")
-    audio=r.record(source)
-
-try:
-    print("the file contains : \n" + r.recognize_google(audio))
-except:
-    pass"""
 #Python 2.x program to transcribe an Audio file 
-import speech_recognition as sr 
-#f=open("text.txt","w")
+try:
+    import speech_recognition as sr 
+except ModuleNotFoundError:
+    import subprocess
+    import sys    
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'speech_recognition']) 
+    import speech_recognition as sr
+
 AUDIO_FILE = ("C:\\Users\\souro\\AppData\\Local\\Temp\\audio.wav") 
   
 # use the audio file as the audio source 

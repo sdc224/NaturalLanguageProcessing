@@ -20,6 +20,9 @@ namespace PresentationLayer
         private static readonly string UserPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         private static readonly string Output = $@"{UserPath}\AppData\Local\Temp\audio.wav";
 
+        private static readonly string Files = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        private readonly string _mainFilePath = Files + @"\LanguageProcessor";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -182,11 +185,10 @@ namespace PresentationLayer
         {
             var argument = $@" {UserPath}\AppData\Local\Temp\audio.wav";
 
-            var files = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var fileName = _mainFilePath + @"\audiototxt.py" + argument;
 
-            var fileName = @"C:\Users\souro\source\repos\audiototxt.py" + argument;
-
-            const string path = @"C:\Users\souro\AppData\Local\Programs\Python\Python37-32\python.exe";
+            var path = LocateExe("python.exe");
+            MessageBox.Show(path);
 
             var window = new ResultPage();
 
@@ -202,11 +204,6 @@ namespace PresentationLayer
                     MessageBox.Show(ex.Message);
                     throw;
                 }
-
-                //_completed = false;
-
-                //while (!_completed)
-                //    MessageBox.Show("Working...Wait");
 
                 MessageBox.Show("Done :)");
 
@@ -244,7 +241,7 @@ namespace PresentationLayer
 
                     window.RichTextBox.AppendText(result);
 
-                    var fileName = $@"{UserPath}\AppData\Local\Temp\text.txt";
+                    /*var fileName = $@"{UserPath}\AppData\Local\Temp\text.txt";
 
                     try
                     {
@@ -266,9 +263,30 @@ namespace PresentationLayer
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex.ToString());
-                    }
+                    }*/
                 }
             }
+        }
+
+        private static string LocateExe(string filename)
+        {
+            var path = Environment.GetEnvironmentVariable("path");
+            if (path == null) return string.Empty;
+            var folders = path.Split(';');
+            foreach (var folder in folders)
+            {
+                if (File.Exists(folder + filename))
+                {
+                    return folder + filename;
+                }
+
+                if (File.Exists(folder + "\\" + filename))
+                {
+                    return folder + "\\" + filename;
+                }
+            }
+
+            return string.Empty;
         }
 
         /*private static void RecognizerOnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)

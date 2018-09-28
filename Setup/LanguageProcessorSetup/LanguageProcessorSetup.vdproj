@@ -21,6 +21,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_29009D22F2F4465EAA60060CFD5F7C2A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_4BBB0D793D6F4CCA9EC5DCFBA48C3D8A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -34,12 +40,6 @@
         "Entry"
         {
         "MsmKey" = "8:_8ED2DA8B883F49A2BD97A16EC0EBBE3A"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_913BAF022EFA4BBC8BC28E1EFD8A6F38"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -149,6 +149,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_29009D22F2F4465EAA60060CFD5F7C2A"
+            {
+            "SourcePath" = "8:..\\..\\PresentationLayer\\Resources\\build\\exe.win-amd64-3.6\\audiototxt.exe"
+            "TargetName" = "8:audiototxt.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_34F4F79F4A804DA0A3EE35614875A7D2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4BBB0D793D6F4CCA9EC5DCFBA48C3D8A"
             {
             "SourcePath" = "8:..\\..\\PresentationLayer\\Images\\icons8_Services.ico"
@@ -175,26 +195,6 @@
             "TargetName" = "8:Services.png"
             "Tag" = "8:"
             "Folder" = "8:_B8CE8733F14A40E293B0C29922E4A999"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_913BAF022EFA4BBC8BC28E1EFD8A6F38"
-            {
-            "SourcePath" = "8:..\\..\\PresentationLayer\\Resources\\audiototxt.py"
-            "TargetName" = "8:audiototxt.py"
-            "Tag" = "8:"
-            "Folder" = "8:_34F4F79F4A804DA0A3EE35614875A7D2"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -288,7 +288,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Language Processor"
         "ProductCode" = "8:{C0640352-645F-4F0F-8143-4651279FAF24}"
-        "PackageCode" = "8:{775B7446-8E14-42A8-A8D0-06A7558D8DD9}"
+        "PackageCode" = "8:{C22F6235-AD9A-4F61-82C1-21335F3E4B66}"
         "UpgradeCode" = "8:{B6380863-4CF2-40DE-8CDD-13C7C4C44157}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

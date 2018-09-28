@@ -184,9 +184,8 @@ namespace PresentationLayer
         {
             var argument = $@" {UserPath}\AppData\Local\Temp\audio.wav";
 
-            var fileName = _mainFilePath + @"\audiototxt.py" + argument;
+            var path = _mainFilePath + @"\audiototxt.exe";
 
-            var path = LocateExe("python.exe");
             MessageBox.Show(path);
 
             var window = new ResultPage();
@@ -195,7 +194,7 @@ namespace PresentationLayer
             {
                 try
                 {
-                    RunCmd(path, fileName, window);
+                    RunCmd(path, argument, window);
                 }
 
                 catch (Exception ex)

@@ -7,7 +7,7 @@ except ModuleNotFoundError:
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'speech_recognition']) 
     import speech_recognition as sr
 
-AUDIO_FILE = ("C:\\Users\\souro\\AppData\\Local\\Temp\\audio.wav") 
+AUDIO_FILE = (str(sys.argv[1])) 
   
 # use the audio file as the audio source 
   

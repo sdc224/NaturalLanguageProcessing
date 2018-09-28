@@ -118,7 +118,7 @@
     <Resource Include="Images\Save.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\audiototxt.py" />
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

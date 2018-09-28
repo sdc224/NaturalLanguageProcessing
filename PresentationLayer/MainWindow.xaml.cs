@@ -16,11 +16,11 @@ namespace PresentationLayer
         private WaveOut _waveOut;
         private WaveFileWriter _writer;
         private WaveFileReader _reader;
-        private static readonly string UserPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        private static readonly string Output = $@"{UserPath}\AppData\Local\Temp\audio.wav";
+        private static readonly string Files = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\LanguageProcessor";
+        private static readonly string Output = $@"{Files}\audio.wav";
+        private const string SourcePath = @"C:\Program Files\audiototxt";
 
-        private static readonly string Files = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        private readonly string _mainFilePath = Files + @"\LanguageProcessor";
+        //private static readonly string DestinationPath = Files;
 
         public MainWindow()
         {
@@ -30,6 +30,8 @@ namespace PresentationLayer
 
             _waveIn.DataAvailable += WaveIn_DataAvailable;
             _waveIn.WaveFormat = new WaveFormat(44100, 1);
+
+            DirectoryCopy(SourcePath, Files, true);
         }
 
         private void WaveIn_DataAvailable(object sender, WaveInEventArgs e)
@@ -54,8 +56,8 @@ namespace PresentationLayer
             if (WaveIn.DeviceCount < 1)
                 throw new InvalidOperationException("No microphone");
 
-            if (File.Exists($@"{UserPath}\AppData\Local\Temp\audio.wav"))
-                File.Delete($@"{UserPath}\AppData\Local\Temp\audio.wav");
+            if (File.Exists(Output))
+                File.Delete(Output);
 
             _writer = new WaveFileWriter(Output, _waveIn.WaveFormat);
 
@@ -167,7 +169,7 @@ namespace PresentationLayer
             _writer.Close();
             _writer = null;
 
-            _reader = new WaveFileReader($@"{UserPath}\AppData\Local\Temp\audio.wav");
+            _reader = new WaveFileReader(Output);
             _waveOut.Init(_reader);
             _waveOut.PlaybackStopped += WaveOut_PlaybackStopped;
             _waveOut.Play();
@@ -182,19 +184,15 @@ namespace PresentationLayer
 
         private void ButtonMicConvert_OnClick(object sender, RoutedEventArgs e)
         {
-            var argument = $@" {UserPath}\AppData\Local\Temp\audio.wav";
-
-            var path = _mainFilePath + @"\audiototxt.exe";
-
-            MessageBox.Show(path);
+            var path = Files + @"\audiototxt.exe";
 
             var window = new ResultPage();
 
-            if (File.Exists($@"{UserPath}\AppData\Local\Temp\audio.wav"))
+            if (File.Exists(Output))
             {
                 try
                 {
-                    RunCmd(path, argument, window);
+                    RunCmd(path, Output, window);
                 }
 
                 catch (Exception ex)
@@ -263,6 +261,40 @@ namespace PresentationLayer
                         Console.WriteLine(ex.ToString());
                     }*/
                 }
+            }
+        }
+
+        private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        {
+            // Get the subdirectories for the specified directory.
+            var dir = new DirectoryInfo(sourceDirName);
+
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException("Source directory does not exist or could not be found: " + sourceDirName);
+            }
+
+            var dirs = dir.GetDirectories();
+            // If the destination directory doesn't exist, create it.
+            if (!Directory.Exists(destDirName))
+            {
+                Directory.CreateDirectory(destDirName);
+            }
+
+            // Get the files in the directory and copy them to the new location.
+            var files = dir.GetFiles();
+            foreach (var file in files)
+            {
+                var tempPath = Path.Combine(destDirName, file.Name);
+                file.CopyTo(tempPath, false);
+            }
+
+            // If copying subdirectories, copy them and their contents to new location.
+            if (!copySubDirs) return;
+            foreach (var subDir in dirs)
+            {
+                var tempPath = Path.Combine(destDirName, subDir.Name);
+                DirectoryCopy(subDir.FullName, tempPath, true);
             }
         }
 

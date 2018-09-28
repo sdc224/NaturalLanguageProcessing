@@ -110,7 +110,7 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:.NETFramework,Version=v4.7.1"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.6"
                 "AllowLaterVersions" = "11:FALSE"
                 "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=671728"
                 }
@@ -288,7 +288,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Language Processor"
         "ProductCode" = "8:{C0640352-645F-4F0F-8143-4651279FAF24}"
-        "PackageCode" = "8:{ED2C3D42-7341-4F36-8289-66BABD216242}"
+        "PackageCode" = "8:{775B7446-8E14-42A8-A8D0-06A7558D8DD9}"
         "UpgradeCode" = "8:{B6380863-4CF2-40DE-8CDD-13C7C4C44157}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

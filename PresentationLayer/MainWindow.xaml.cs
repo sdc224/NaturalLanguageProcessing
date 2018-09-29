@@ -21,7 +21,7 @@ namespace PresentationLayer
         private static readonly string PythonFolder = Path.Combine(Files, "Python");
         private readonly string _audioFile = Path.Combine(AudioFolder, "audio.wav");
         private readonly string _pythonExe = Path.Combine(PythonFolder, "audiototxt.exe");
-        private static string Result;
+        private static string _result;
 
         public MainWindow()
         {
@@ -201,7 +201,7 @@ namespace PresentationLayer
 
                 MessageBox.Show("Done :)");
 
-                window.RichTextBox.AppendText(Result);
+                window.RichTextBox.AppendText(_result);
                 window.Owner = this;
                 window.ShowDialog();
                 //Hide();
@@ -234,7 +234,7 @@ namespace PresentationLayer
                 if (process == null) return;
                 using (var reader = process.StandardOutput)
                 {
-                    Result = reader.ReadToEnd();
+                    _result = reader.ReadToEnd();
 
                     /*var fileName = $@"{UserPath}\AppData\Local\Temp\text.txt";
 

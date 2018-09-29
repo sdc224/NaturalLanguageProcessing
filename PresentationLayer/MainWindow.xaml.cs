@@ -16,11 +16,12 @@ namespace PresentationLayer
         private WaveOut _waveOut;
         private WaveFileWriter _writer;
         private WaveFileReader _reader;
-        private static readonly string Files = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\LanguageProcessor";
-        private static readonly string Output = $@"{Files}\audio.wav";
-        private const string SourcePath = @"C:\Program Files\audiototxt";
-
-        //private static readonly string DestinationPath = Files;
+        private static readonly string Files = Directory.GetCurrentDirectory();
+        private static readonly string AudioFolder = Path.Combine(Files, "Audio");
+        private static readonly string PythonFolder = Path.Combine(Files, "Python");
+        private readonly string _audioFile = Path.Combine(AudioFolder, "audio.wav");
+        private readonly string _pythonExe = Path.Combine(PythonFolder, "audiototxt.exe");
+        private static string Result;
 
         public MainWindow()
         {
@@ -29,9 +30,7 @@ namespace PresentationLayer
             _waveIn = new WaveIn();
 
             _waveIn.DataAvailable += WaveIn_DataAvailable;
-            _waveIn.WaveFormat = new WaveFormat(44100, 1);
-
-            DirectoryCopy(SourcePath, Files, true);
+            _waveIn.WaveFormat = new WaveFormat(16000, 1);
         }
 
         private void WaveIn_DataAvailable(object sender, WaveInEventArgs e)
@@ -49,17 +48,17 @@ namespace PresentationLayer
             if (!(sender is Button button)) return;
 
             _waveOut = new WaveOut();
-            _waveIn = new WaveIn { WaveFormat = new WaveFormat(44100, 1) };
+            _waveIn = new WaveIn { WaveFormat = new WaveFormat(16000, 1) };
 
             _waveIn.DataAvailable += WaveIn_DataAvailable;
 
             if (WaveIn.DeviceCount < 1)
                 throw new InvalidOperationException("No microphone");
 
-            if (File.Exists(Output))
-                File.Delete(Output);
+            if (File.Exists(_audioFile))
+                File.Delete(_audioFile);
 
-            _writer = new WaveFileWriter(Output, _waveIn.WaveFormat);
+            _writer = new WaveFileWriter(_audioFile, _waveIn.WaveFormat);
 
             _waveIn.StartRecording();
 
@@ -169,7 +168,7 @@ namespace PresentationLayer
             _writer.Close();
             _writer = null;
 
-            _reader = new WaveFileReader(Output);
+            _reader = new WaveFileReader(_audioFile);
             _waveOut.Init(_reader);
             _waveOut.PlaybackStopped += WaveOut_PlaybackStopped;
             _waveOut.Play();
@@ -184,15 +183,14 @@ namespace PresentationLayer
 
         private void ButtonMicConvert_OnClick(object sender, RoutedEventArgs e)
         {
-            var path = Files + @"\audiototxt.exe";
 
             var window = new ResultPage();
 
-            if (File.Exists(Output))
+            if (File.Exists(_audioFile))
             {
                 try
                 {
-                    RunCmd(path, Output, window);
+                    RunCmd(_pythonExe, _audioFile);
                 }
 
                 catch (Exception ex)
@@ -203,6 +201,7 @@ namespace PresentationLayer
 
                 MessageBox.Show("Done :)");
 
+                window.RichTextBox.AppendText(Result);
                 window.Owner = this;
                 window.ShowDialog();
                 //Hide();
@@ -215,8 +214,10 @@ namespace PresentationLayer
             }
         }
 
-        private static void RunCmd(string cmd, string args, ResultPage window)
+        private static void RunCmd(string cmd, string args)
         {
+            if (cmd == null) throw new ArgumentNullException(nameof(cmd));
+            if (args == null) throw new ArgumentNullException(nameof(args));
             var start = new ProcessStartInfo
             {
                 FileName = cmd,             //cmd is full path to python.exe
@@ -233,9 +234,7 @@ namespace PresentationLayer
                 if (process == null) return;
                 using (var reader = process.StandardOutput)
                 {
-                    var result = reader.ReadToEnd();
-
-                    window.RichTextBox.AppendText(result);
+                    Result = reader.ReadToEnd();
 
                     /*var fileName = $@"{UserPath}\AppData\Local\Temp\text.txt";
 
@@ -264,7 +263,7 @@ namespace PresentationLayer
             }
         }
 
-        private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        /*private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
         {
             // Get the subdirectories for the specified directory.
             var dir = new DirectoryInfo(sourceDirName);
@@ -317,7 +316,7 @@ namespace PresentationLayer
             }
 
             return string.Empty;
-        }
+        }*/
 
         /*private static void RecognizerOnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {

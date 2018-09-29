@@ -7,13 +7,13 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("PresentationLayer")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Language Processor")]
+[assembly: AssemblyDescription("A Natural Language Processor created in Python and C#")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("PresentationLayer")]
+[assembly: AssemblyCompany("SDCWORLD")]
+[assembly: AssemblyProduct("Language Processor")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyTrademark("SDCWORLD")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible

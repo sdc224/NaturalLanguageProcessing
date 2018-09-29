@@ -1,11 +1,13 @@
 ﻿using NAudio.Wave;
+using PresentationLayer;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace PresentationLayer
+namespace LanguageProcessor
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -19,8 +21,8 @@ namespace PresentationLayer
         private static readonly string Files = Directory.GetCurrentDirectory();
         private static readonly string AudioFolder = Path.Combine(Files, "Audio");
         private static readonly string PythonFolder = Path.Combine(Files, "Python");
-        private readonly string _audioFile = Path.Combine(AudioFolder, "audio.wav");
-        private readonly string _pythonExe = Path.Combine(PythonFolder, "audiototxt.exe");
+        private static readonly string AudioFile = Path.Combine(AudioFolder, "audio.wav");
+        private static readonly string PythonExe = Path.Combine(PythonFolder, "audiototxt.exe");
         private static string _result;
 
         public MainWindow()
@@ -31,6 +33,15 @@ namespace PresentationLayer
 
             _waveIn.DataAvailable += WaveIn_DataAvailable;
             _waveIn.WaveFormat = new WaveFormat(16000, 1);
+
+            Console.WriteLine(Files);
+            var zipPath = Files + @"\Python.zip";
+
+            if (!Directory.Exists(PythonFolder))
+                ZipFile.ExtractToDirectory(zipPath, PythonFolder);
+
+            if (!Directory.Exists(AudioFolder))
+                Directory.CreateDirectory(AudioFolder);
         }
 
         private void WaveIn_DataAvailable(object sender, WaveInEventArgs e)
@@ -55,10 +66,10 @@ namespace PresentationLayer
             if (WaveIn.DeviceCount < 1)
                 throw new InvalidOperationException("No microphone");
 
-            if (File.Exists(_audioFile))
-                File.Delete(_audioFile);
+            if (File.Exists(AudioFile))
+                File.Delete(AudioFile);
 
-            _writer = new WaveFileWriter(_audioFile, _waveIn.WaveFormat);
+            _writer = new WaveFileWriter(AudioFile, _waveIn.WaveFormat);
 
             _waveIn.StartRecording();
 
@@ -168,7 +179,7 @@ namespace PresentationLayer
             _writer.Close();
             _writer = null;
 
-            _reader = new WaveFileReader(_audioFile);
+            _reader = new WaveFileReader(AudioFile);
             _waveOut.Init(_reader);
             _waveOut.PlaybackStopped += WaveOut_PlaybackStopped;
             _waveOut.Play();
@@ -186,17 +197,16 @@ namespace PresentationLayer
 
             var window = new ResultPage();
 
-            if (File.Exists(_audioFile))
+            if (File.Exists(AudioFile))
             {
                 try
                 {
-                    RunCmd(_pythonExe, _audioFile);
+                    RunCmd(PythonExe, AudioFile);
                 }
 
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
-                    throw;
+                    throw new Exception(ex.Message);
                 }
 
                 MessageBox.Show("Done :)");
@@ -214,14 +224,15 @@ namespace PresentationLayer
             }
         }
 
-        private static void RunCmd(string cmd, string args)
+        private static void RunCmd(string fileName, string argument)
         {
-            if (cmd == null) throw new ArgumentNullException(nameof(cmd));
-            if (args == null) throw new ArgumentNullException(nameof(args));
+            if (fileName == null) throw new ArgumentNullException(nameof(fileName));
+            if (argument == null) throw new ArgumentNullException(nameof(argument));
+
             var start = new ProcessStartInfo
             {
-                FileName = cmd,             //cmd is full path to python.exe
-                Arguments = args,           //args is path to .py file and any cmd line args
+                FileName = "\"" + fileName + "\"",     //cmd is full path to python.exe
+                Arguments = "\"" + argument + "\"",   //args is path to .py file and any cmd line args
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true,
@@ -232,6 +243,7 @@ namespace PresentationLayer
             using (var process = Process.Start(start))
             {
                 if (process == null) return;
+
                 using (var reader = process.StandardOutput)
                 {
                     _result = reader.ReadToEnd();

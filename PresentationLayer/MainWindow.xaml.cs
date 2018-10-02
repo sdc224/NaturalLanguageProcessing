@@ -1,5 +1,4 @@
 ﻿using NAudio.Wave;
-using PresentationLayer;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -275,7 +274,18 @@ namespace LanguageProcessor
             }
         }
 
-        /*private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        private void Create_OnClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Connect_OnClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+    }
+
+    /*private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
         {
             // Get the subdirectories for the specified directory.
             var dir = new DirectoryInfo(sourceDirName);
@@ -330,54 +340,53 @@ namespace LanguageProcessor
             return string.Empty;
         }*/
 
-        /*private static void RecognizerOnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+    /*private static void RecognizerOnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+    {
+        const string fileName = @"D:\text.txt";
+
+        try
         {
-            const string fileName = @"D:\text.txt";
-
-            try
+            // Check if file already exists. If yes, delete it. 
+            if (File.Exists(fileName))
             {
-                // Check if file already exists. If yes, delete it. 
-                if (File.Exists(fileName))
-                {
-                    File.Delete(fileName);
-                }
-
-                // Create a new file 
-                using (var sw = File.CreateText(fileName))
-                {
-                    if (e.Result != null)
-                    {
-                        sw.WriteAsync(e.Result.Text + " ");
-                    }
-                    else
-                    {
-                        sw.Write("Recognized text not available...");
-                    }
-                }
-
+                File.Delete(fileName);
             }
 
-            catch (Exception ex)
+            // Create a new file 
+            using (var sw = File.CreateText(fileName))
             {
-                Console.WriteLine(ex.ToString());
+                if (e.Result != null)
+                {
+                    sw.WriteAsync(e.Result.Text + " ");
+                }
+                else
+                {
+                    sw.Write("Recognized text not available...");
+                }
             }
+
         }
 
-        private static void Recognizer_RecognizeCompleted(object sender, RecognizeCompletedEventArgs e)
+        catch (Exception ex)
         {
-            if (e.Error != null)
-            {
-                MessageBox.Show($"Error encountered, {e.Error.GetType().Name}: {e.Error.Message}");
-            }
-            if (e.Cancelled)
-            {
-                MessageBox.Show("Operation cancelled.");
-            }
-            if (e.InputStreamEnded)
-            {
-                MessageBox.Show("End of file adding.");
-            }
-            _completed = true;
-        }*/
+            Console.WriteLine(ex.ToString());
+        }
     }
+
+    private static void Recognizer_RecognizeCompleted(object sender, RecognizeCompletedEventArgs e)
+    {
+        if (e.Error != null)
+        {
+            MessageBox.Show($"Error encountered, {e.Error.GetType().Name}: {e.Error.Message}");
+        }
+        if (e.Cancelled)
+        {
+            MessageBox.Show("Operation cancelled.");
+        }
+        if (e.InputStreamEnded)
+        {
+            MessageBox.Show("End of file adding.");
+        }
+        _completed = true;
+    }*/
 }

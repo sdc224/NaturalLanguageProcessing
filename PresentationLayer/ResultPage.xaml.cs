@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace PresentationLayer
+namespace LanguageProcessor
 {
     /// <summary>
     /// Interaction logic for ResultPage.xaml

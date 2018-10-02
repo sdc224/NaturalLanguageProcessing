@@ -75,6 +75,7 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Speech" />
@@ -95,9 +96,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Migrations\201810020836478_InitialModel.cs" />
+    <Compile Include="Migrations\201810020836478_InitialModel.Designer.cs">
+      <DependentUpon>201810020836478_InitialModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Model\User.cs" />
     <Compile Include="ResultPage.xaml.cs">
       <DependentUpon>ResultPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\LanguageDbContext.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -129,6 +137,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Migrations\201810020836478_InitialModel.resx">
+      <DependentUpon>201810020836478_InitialModel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -147,12 +158,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\MicrophoneMute.png" />
-    <Resource Include="Images\MicrophoneOff.png" />
-    <Resource Include="Images\MicrophoneOn.png" />
+    <Resource Include="Resources\Images\MicrophoneMute.png" />
+    <Resource Include="Resources\Images\MicrophoneOff.png" />
+    <Resource Include="Resources\Images\MicrophoneOn.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Save.png" />
+    <Resource Include="Resources\Images\Save.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icons8_Services.ico" />
@@ -170,10 +181,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\icons8_Services.ico" />
-    <Resource Include="Images\icons8_Services_16.png" />
-    <Resource Include="Images\icons8_Services_32.png" />
-    <Resource Include="Images\Services.png" />
+    <Resource Include="Resources\Images\icons8_Services.ico" />
+    <Resource Include="Resources\Images\icons8_Services_16.png" />
+    <Resource Include="Resources\Images\icons8_Services_32.png" />
+    <Resource Include="Resources\Images\Services.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

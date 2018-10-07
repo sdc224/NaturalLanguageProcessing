@@ -13,7 +13,7 @@ namespace LanguageProcessor.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201810020836478_InitialModel"; }
+            get { return "201810022221316_InitialModel"; }
         }
         
         string IMigrationMetadata.Source

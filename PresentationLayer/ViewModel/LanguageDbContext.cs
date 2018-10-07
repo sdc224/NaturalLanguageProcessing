@@ -3,7 +3,7 @@ using System.Data.Entity;
 
 namespace LanguageProcessor.ViewModel
 {
-    class LanguageDbContext : DbContext
+    public class LanguageDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
     }

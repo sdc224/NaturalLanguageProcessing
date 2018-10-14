@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 
 namespace LanguageProcessor
 {
@@ -7,9 +8,21 @@ namespace LanguageProcessor
     /// </summary>
     public partial class ResultPage : Window
     {
-        public ResultPage()
+        private static readonly string Files = Directory.GetCurrentDirectory();
+
+        public ResultPage(string buttonName)
         {
             InitializeComponent();
+            /*using (var file = new FileStream(Path.Combine(Files, buttonName), FileMode.Open, FileAccess.Read))
+            {
+                using (var reader = new StreamReader(file))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        RichTextBox.AppendText(reader.ReadLine());
+                    }
+                }
+            }*/
         }
 
         /*protected override void OnClosed(EventArgs e)

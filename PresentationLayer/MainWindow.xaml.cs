@@ -26,11 +26,12 @@ namespace LanguageProcessor
         private static readonly string Files = Directory.GetCurrentDirectory();
         private static readonly string AudioFolder = Path.Combine(Files, "Audio");
         private static readonly string PythonFolder = Path.Combine(Files, "Python");
-        private static readonly string AudioFile = Path.Combine(AudioFolder, "audio.wav");
+        private static string _audioFile;
         private static readonly string PythonExe = Path.Combine(PythonFolder, "audiototxt.exe");
         private static string _result;
         private readonly LanguageDbContext _context;
         private readonly GeoCoordinateWatcher _watcher;
+        private static string _micUser;
 
         public MainWindow()
         {
@@ -82,10 +83,12 @@ namespace LanguageProcessor
             if (WaveIn.DeviceCount < 1)
                 throw new InvalidOperationException("No microphone");
 
-            if (File.Exists(AudioFile))
-                File.Delete(AudioFile);
+            _audioFile = Path.Combine(AudioFolder, $"{button.Name.Substring(6, 4)}audio.wav");
 
-            _writer = new WaveFileWriter(AudioFile, _waveIn.WaveFormat);
+            if (File.Exists(_audioFile))
+                File.Delete(_audioFile);
+
+            _writer = new WaveFileWriter(_audioFile, _waveIn.WaveFormat);
 
             _waveIn.StartRecording();
 
@@ -94,41 +97,49 @@ namespace LanguageProcessor
                 case "ButtonMic1On":
                     ButtonMic1Off.IsEnabled = true;
                     ButtonMic1On.IsEnabled = false;
+                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 case "ButtonMic2On":
                     ButtonMic2Off.IsEnabled = true;
                     ButtonMic2On.IsEnabled = false;
+                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 case "ButtonMic3On":
                     ButtonMic3Off.IsEnabled = true;
                     ButtonMic3On.IsEnabled = false;
+                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 case "ButtonMic4On":
                     ButtonMic4Off.IsEnabled = true;
                     ButtonMic4On.IsEnabled = false;
+                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 case "ButtonMic5On":
                     ButtonMic5Off.IsEnabled = true;
                     ButtonMic5On.IsEnabled = false;
+                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 case "ButtonMic6On":
                     ButtonMic6Off.IsEnabled = true;
                     ButtonMic6On.IsEnabled = false;
+                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 case "ButtonMic7On":
                     ButtonMic7Off.IsEnabled = true;
                     ButtonMic7On.IsEnabled = false;
+                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 case "ButtonMic8On":
                     ButtonMic8Off.IsEnabled = true;
                     ButtonMic8On.IsEnabled = false;
+                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 default:
@@ -195,7 +206,9 @@ namespace LanguageProcessor
             _writer.Close();
             _writer = null;
 
-            _reader = new WaveFileReader(AudioFile);
+            _audioFile = Path.Combine(AudioFolder, $"{button.Name.Substring(6, 4)}audio.wav");
+
+            _reader = new WaveFileReader(_audioFile);
             _waveOut.Init(_reader);
             _waveOut.PlaybackStopped += WaveOut_PlaybackStopped;
             _waveOut.Play();
@@ -210,14 +223,16 @@ namespace LanguageProcessor
 
         private void ButtonMicConvert_OnClick(object sender, RoutedEventArgs e)
         {
+            if (!(sender is Button button))
+                return;
 
-            var window = new ResultPage();
+            _audioFile = Path.Combine(AudioFolder, $"{button.Name.Substring(6, 4)}audio.wav");
 
-            if (File.Exists(AudioFile))
+            if (File.Exists(_audioFile))
             {
                 try
                 {
-                    RunCmd(PythonExe, AudioFile);
+                    RunCmd(PythonExe, _audioFile, button.Name);
                 }
 
                 catch (Exception ex)
@@ -227,9 +242,11 @@ namespace LanguageProcessor
 
                 MessageBox.Show("Done :)");
 
+                /*var window = new ResultPage(button.Name);
+
                 window.RichTextBox.AppendText(_result);
                 window.Owner = this;
-                window.ShowDialog();
+                window.ShowDialog();*/
                 //Hide();
                 ButtonMic1Convert.IsEnabled = false;
             }
@@ -240,7 +257,7 @@ namespace LanguageProcessor
             }
         }
 
-        private static void RunCmd(string fileName, string argument)
+        private static void RunCmd(string fileName, string argument, string buttonName)
         {
             if (fileName == null) throw new ArgumentNullException(nameof(fileName));
             if (argument == null) throw new ArgumentNullException(nameof(argument));
@@ -264,20 +281,20 @@ namespace LanguageProcessor
                 {
                     _result = reader.ReadToEnd();
 
-                    /*var fileName = $@"{UserPath}\AppData\Local\Temp\text.txt";
+                    var newFile = Path.Combine(Files, _micUser + ".txt");
 
                     try
                     {
                         // Check if file already exists. If yes, delete it. 
-                        if (File.Exists(fileName))
+                        if (File.Exists(newFile))
                         {
-                            File.Delete(fileName);
+                            File.Delete(newFile);
                         }
 
                         // Create a new file 
-                        using (var sw = File.CreateText(fileName))
+                        using (var sw = File.CreateText(newFile))
                         {
-                            sw.Write(result + " ");
+                            sw.Write(_result + " ");
                         }
 
                         //_completed = true;
@@ -285,8 +302,8 @@ namespace LanguageProcessor
 
                     catch (Exception ex)
                     {
-                        Console.WriteLine(ex.ToString());
-                    }*/
+                        MessageBox.Show(ex.ToString());
+                    }
                 }
             }
         }

@@ -8,115 +8,186 @@
         Title="MainWindow" Height="423.103" Width="840.013">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" MinWidth="349.333"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" MinWidth="362"/>
         </Grid.ColumnDefinitions>
-        <StackPanel x:Name="StackPanel1" HorizontalAlignment="Left" Height="362" Margin="10,10,0,0" VerticalAlignment="Top" Width="339">
-            <StackPanel Height="91" Margin="0,0,0,0" Orientation="Horizontal">
-                <Label x:Name="Mic1" Content="Mic 1" Margin="0,16,0,26.667" Width="99" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Height="48" RenderTransformOrigin="0.563,0.574"/>
-                <Button x:Name="ButtonMic1On" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
+        <Grid x:Name="Grid1" HorizontalAlignment="Left" Height="362" Margin="10,10,0,10" VerticalAlignment="Top" Width="339">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid Height="91" Grid.Row="0" Margin="0,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label x:Name="Mic1" Grid.Column="0" Content="Mic 1" Margin="0,16,0,26.667" Width="99" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Height="48" RenderTransformOrigin="0.563,0.574"/>
+                <Button x:Name="ButtonMic1On" Grid.Column="1" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOn.png"/>
                 </Button>
-                <Button x:Name="ButtonMic1Off" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
+                <Button x:Name="ButtonMic1Off" Grid.Column="2" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOff.png"/>
                 </Button>
-                <Button x:Name="ButtonMic1Convert" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
+                <Button x:Name="ButtonMic1Convert" Grid.Column="3" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
                     <Image Source="Resources/Images/Save.png"></Image>
                 </Button>
-            </StackPanel>
-            <StackPanel Height="91" Margin="0,0,0,0" Orientation="Horizontal">
+            </Grid>
+            <Grid Height="91" Grid.Row="1" Margin="0,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
                 <Label x:Name="Mic2" Content="Mic 2" Margin="0,16,0,26.667" Width="99" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Button x:Name="ButtonMic2On" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
+                <Button x:Name="ButtonMic2On" Grid.Column="1" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOn.png"/>
                 </Button>
-                <Button x:Name="ButtonMic2Off" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
+                <Button x:Name="ButtonMic2Off" Grid.Column="2" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOff.png"/>
                 </Button>
-                <Button x:Name="ButtonMic2Convert" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
+                <Button x:Name="ButtonMic2Convert" Grid.Column="3" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
                     <Image Source="Resources/Images/Save.png"></Image>
                 </Button>
-            </StackPanel>
-            <StackPanel Height="90" Margin="0,0,0,0" Orientation="Horizontal">
+            </Grid>
+            <Grid Height="90" Grid.Row="2" Margin="0,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
                 <Label x:Name="Mic3" Content="Mic 3" Margin="0,16,0,26.667" Width="99" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Button x:Name="ButtonMic3On" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
+                <Button x:Name="ButtonMic3On" Grid.Column="1" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOn.png"/>
                 </Button>
-                <Button x:Name="ButtonMic3Off" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
+                <Button x:Name="ButtonMic3Off" Grid.Column="2" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOff.png"/>
                 </Button>
-                <Button x:Name="ButtonMic3Convert" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
+                <Button x:Name="ButtonMic3Convert" Grid.Column="3" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
                     <Image Source="Resources/Images/Save.png"></Image>
                 </Button>
-            </StackPanel>
-            <StackPanel Height="91" Margin="0,0,0,0" Orientation="Horizontal">
+            </Grid>
+            <Grid Height="91" Grid.Row="3" Margin="0,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
                 <Label x:Name="Mic4" Content="Mic 4" Margin="0,16,0,26.667" Width="99" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Button x:Name="ButtonMic4On" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
+                <Button x:Name="ButtonMic4On" Grid.Column="1" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOn.png" />
                 </Button>
-                <Button x:Name="ButtonMic4Off" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
+                <Button x:Name="ButtonMic4Off" Grid.Column="2" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOff.png"/>
                 </Button>
-                <Button x:Name="ButtonMic4Convert" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
+                <Button x:Name="ButtonMic4Convert" Grid.Column="3" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
                     <Image Source="Resources/Images/Save.png"></Image>
                 </Button>
-            </StackPanel>
-        </StackPanel>
-        <Grid Grid.Column="1" Height="362" Margin="10,10,5,5" VerticalAlignment="Top">
-            <Button x:Name="Create" Content="Create" Margin="0,96,0,188" Click="Create_OnClick" Cursor="Hand" FontSize="24"/>
-            <Button x:Name="Connect" Content="Connect" Margin="0,198,1,86" Click="Connect_OnClick" Cursor="Hand" FontSize="24"/>
-
+            </Grid>
         </Grid>
-        <StackPanel x:Name="StackPanel2" Grid.Column="2" Height="362" Margin="10,10,5,5" VerticalAlignment="Top">
-            <StackPanel Height="91" Margin="0,0,9.667,0" Orientation="Horizontal">
+        <Grid Grid.Column="1" Height="362" Margin="5,10" VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height=".5*"/>
+                <RowDefinition Height=".5*"/>
+                <RowDefinition Height=".5*"/>
+                <RowDefinition Height=".5*"/>
+            </Grid.RowDefinitions>
+            <Button x:Name="Create" Grid.Row="0" Content="Create" Margin="0,10,0,10" Click="Create_OnClick" Cursor="Hand" FontSize="24"/>
+            <Button x:Name="Connect" Grid.Row="1" Content="Connect" Margin="0,10,0,10" Click="Connect_OnClick" Cursor="Hand" FontSize="24"/>
+            <Button x:Name="ConvertAll" Grid.Row="2" Content="Convert All" Margin="0,10,0,10" FontSize="18"/>
+            <Button x:Name="GenerateRrf" Grid.Row="3" Margin="0,10,0,10">
+                <TextBlock FontSize="18" Height="60" Width="112" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    Generate<LineBreak/>Document
+                </TextBlock>
+            </Button>
+        </Grid>
+        <Grid x:Name="Grid2" Grid.Column="2" Height="362" Margin="10,10,0,10" VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid Height="91" Grid.Row="0" Margin="0,0,9.667,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
                 <Label x:Name="Mic5" Content="Mic 5" Margin="0,16,0,26.667" Width="99" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Button x:Name="ButtonMic5On" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
+                <Button x:Name="ButtonMic5On" Grid.Column="1" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOn.png"/>
                 </Button>
-                <Button x:Name="ButtonMic5Off" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
+                <Button x:Name="ButtonMic5Off" Grid.Column="2" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOff.png"/>
                 </Button>
-                <Button x:Name="ButtonMic5Convert" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
+                <Button x:Name="ButtonMic5Convert" Grid.Column="3" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
                     <Image Source="Resources/Images/Save.png"></Image>
                 </Button>
-            </StackPanel>
-            <StackPanel Height="91" Margin="0,0,9.667,0" Orientation="Horizontal">
+            </Grid>
+            <Grid Height="91" Grid.Row="1" Margin="0,0,9.667,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
                 <Label x:Name="Mic6" Content="Mic 6" Margin="0,16,0,26.667" Width="99" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Button x:Name="ButtonMic6On" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
+                <Button x:Name="ButtonMic6On" Grid.Column="1" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOn.png"/>
                 </Button>
-                <Button x:Name="ButtonMic6Off" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
+                <Button x:Name="ButtonMic6Off" Grid.Column="2" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOff.png"/>
                 </Button>
-                <Button x:Name="ButtonMic6Convert" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
+                <Button x:Name="ButtonMic6Convert" Grid.Column="3" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
                     <Image Source="Resources/Images/Save.png"></Image>
                 </Button>
-            </StackPanel>
-            <StackPanel Height="90" Margin="0,0,9.667,0" Orientation="Horizontal">
+            </Grid>
+            <Grid Grid.Row="2" Height="90" Margin="0,0,9.667,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
                 <Label x:Name="Mic7" Content="Mic 7" Margin="0,16,0,26.667" Width="99" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Button x:Name="ButtonMic7On" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
+                <Button x:Name="ButtonMic7On" Grid.Column="1" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOn.png"/>
                 </Button>
-                <Button x:Name="ButtonMic7Off" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
+                <Button x:Name="ButtonMic7Off" Grid.Column="2" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOff.png"/>
                 </Button>
-                <Button x:Name="ButtonMic7Convert" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
+                <Button x:Name="ButtonMic7Convert" Grid.Column="3" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
                     <Image Source="Resources/Images/Save.png"></Image>
                 </Button>
-            </StackPanel>
-            <StackPanel Height="91" Margin="0,0,9.667,0" Orientation="Horizontal">
+            </Grid>
+            <Grid Grid.Row="3" Height="91" Margin="0,0,9.667,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
                 <Label x:Name="Mic8" Content="Mic 8" Margin="0,16,0,26.667" Width="99" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Button x:Name="ButtonMic8On" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
+                <Button x:Name="ButtonMic8On" Grid.Column="1" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOn.png"/>
                 </Button>
-                <Button x:Name="ButtonMic8Off" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
+                <Button x:Name="ButtonMic8Off" Grid.Column="2" Width="61" Margin="5,10,10,9.667" Click="ButtonStop_OnClick" IsEnabled="False" Cursor="Hand">
                     <Image Source="Resources/Images/MicrophoneOff.png"/>
                 </Button>
-                <Button x:Name="ButtonMic8Convert" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
+                <Button x:Name="ButtonMic8Convert" Grid.Column="3" Width="61" Margin="5,10,10,9.667" Cursor="Hand" Click="ButtonMicConvert_OnClick">
                     <Image Source="Resources/Images/Save.png"></Image>
                 </Button>
-            </StackPanel>
-        </StackPanel>
+            </Grid>
+        </Grid>
 
     </Grid>
 </Window>

@@ -11,8 +11,9 @@ namespace LanguageProcessor.Migrations
                 "dbo.Users",
                 c => new
                     {
-                        Id = c.Long(nullable: false),
+                        Id = c.Long(nullable: false, identity: true),
                         Name = c.String(),
+                        NetworkId = c.Long(nullable: false),
                         Time = c.DateTime(nullable: false),
                         Location = c.String(),
                         HostName = c.String(),

@@ -96,15 +96,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Migrations\201810022221316_InitialModel.cs" />
-    <Compile Include="Migrations\201810022221316_InitialModel.Designer.cs">
-      <DependentUpon>201810022221316_InitialModel.cs</DependentUpon>
+    <Compile Include="Migrations\201810151454358_InitialModel.cs" />
+    <Compile Include="Migrations\201810151454358_InitialModel.Designer.cs">
+      <DependentUpon>201810151454358_InitialModel.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="ResultPage.xaml.cs">
       <DependentUpon>ResultPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Server\TCPServer.cs" />
     <Compile Include="ViewModel\LanguageDbContext.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -137,8 +138,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Migrations\201810022221316_InitialModel.resx">
-      <DependentUpon>201810022221316_InitialModel.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201810151454358_InitialModel.resx">
+      <DependentUpon>201810151454358_InitialModel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

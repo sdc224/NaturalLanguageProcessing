@@ -275,7 +275,7 @@ namespace LanguageProcessor
 
             _context.Users.Local.Add(new User
             {
-                Id = combineId,
+                NetworkId = combineId,
                 Name = Environment.MachineName,
                 Time = DateTime.Now.ToUniversalTime(),
                 Location = _watcher.Position.Location.ToString(),
@@ -286,7 +286,7 @@ namespace LanguageProcessor
 
             var data = _context.Users.ToList().Last();
             MessageBox.Show(
-                $"Your id is {data.Id}\nName {data.Name}\nTime {data.Time}\nLocation {data.Location}\nHostname {data.HostName}\nIp Address {data.IpAddress}");
+                $"Your network id is {data.NetworkId}\nName {data.Name}\nTime {data.Time}\nLocation {data.Location}\nHostname {data.HostName}\nIp Address {data.IpAddress}");
         }
 
         private void Connect_OnClick(object sender, RoutedEventArgs e)

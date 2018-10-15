@@ -7,10 +7,12 @@ namespace LanguageProcessor.Model
     public class User
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
         public string Name { get; set; }
+
+        public long NetworkId { get; set; }
 
         public DateTime Time { get; set; }
 

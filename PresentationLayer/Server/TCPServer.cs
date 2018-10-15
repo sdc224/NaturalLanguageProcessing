@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-namespace TCPDataTransfer
+namespace LanguageProcessor.Server
 {
     public class TcpServer
     {
@@ -12,6 +12,11 @@ namespace TCPDataTransfer
         public TcpServer()
         {
             _objServer = new TcpListener(IPAddress.Any, 6868);
+        }
+
+        public TcpServer(TcpListener objServer)
+        {
+            _objServer = objServer;
         }
 
         public void StartServer()
@@ -45,12 +50,12 @@ namespace TCPDataTransfer
                     {
                         var cmdBuff = new byte[3];
                         _ns.Read(cmdBuff, 0, cmdBuff.Length);
-                        var recvData = ReadStream();
+                        var receiveData = ReadStream();
                         switch (Convert.ToInt32(Encoding.UTF8.GetString(cmdBuff)))
                         {
                             case 125:
                                 {
-                                    fs = new FileStream(@"D:\Games\" + Encoding.UTF8.GetString(recvData), FileMode.CreateNew);
+                                    fs = new FileStream(@"D:\Games\" + Encoding.UTF8.GetString(receiveData), FileMode.CreateNew);
                                     var dataToSend = CreateDataPacket(Encoding.UTF8.GetBytes("126"),
                                         Encoding.UTF8.GetBytes(Convert.ToString(currentFilePointer)));
                                     _ns.Write(dataToSend, 0, dataToSend.Length);
@@ -62,7 +67,7 @@ namespace TCPDataTransfer
                                     if (fs != null)
                                     {
                                         fs.Seek(currentFilePointer, SeekOrigin.Begin);
-                                        fs.Write(recvData, 0, recvData.Length);
+                                        fs.Write(receiveData, 0, receiveData.Length);
                                         currentFilePointer = fs.Position;
                                     }
 

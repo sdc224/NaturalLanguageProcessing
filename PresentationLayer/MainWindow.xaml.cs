@@ -1,4 +1,5 @@
 ﻿using LanguageProcessor.Model;
+using LanguageProcessor.Server;
 using LanguageProcessor.ViewModel;
 using NAudio.Wave;
 using System;
@@ -9,6 +10,9 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -43,6 +47,7 @@ namespace LanguageProcessor
             _enabledMic = new int[9];
 
             InitializeComponent();
+            DataContext = this;
 
             if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
             {
@@ -246,16 +251,17 @@ namespace LanguageProcessor
             _reader = null;
         }
 
-        private void ButtonMicConvert_OnClick(object sender, RoutedEventArgs e)
+        private async void ButtonMicConvert_OnClick(object sender, RoutedEventArgs e)
         {
             if (!(sender is Button button))
                 return;
 
             _audioFile = Path.Combine(AudioFolder, $"audio{button.Name[9]}.wav");
+            ProgressBarSpeechToText.IsIndeterminate = true;
 
-            if (SpeechToText(_audioFile))
-                MessageBox.Show("Done 😊");
+            await SpeechToText(_audioFile);
 
+            ProgressBarSpeechToText.IsIndeterminate = false;
             button.IsEnabled = false;
 
             /*var window = new ResultPage(button.Name);
@@ -287,6 +293,9 @@ namespace LanguageProcessor
             var data = _context.Users.ToList().Last();
             MessageBox.Show(
                 $"Your network id is {data.NetworkId}\nName {data.Name}\nTime {data.Time}\nLocation {data.Location}\nHostname {data.HostName}\nIp Address {data.IpAddress}");
+            var objectServer = new TcpServer(new TcpListener(IPAddress.Parse(GetLocalIpAddress()), 6868));
+            var objectThread = new Thread(objectServer.StartServer);
+            objectThread.Start();
         }
 
         private void Connect_OnClick(object sender, RoutedEventArgs e)
@@ -296,8 +305,10 @@ namespace LanguageProcessor
             MessageBox.Show("Removed");
         }
 
-        private void SaveAll_Click(object sender, RoutedEventArgs e)
+        private async void SaveAll_Click(object sender, RoutedEventArgs e)
         {
+            ProgressBarSpeechToText.IsIndeterminate = true;
+
             for (var i = 1; i < _enabledMic.Length; i++)
             {
                 if (_enabledMic[i] != 1)
@@ -305,34 +316,36 @@ namespace LanguageProcessor
 
                 _audioFile = Path.Combine(AudioFolder, $"audio{i}.wav");
                 _micUser = $"Mic{i}";
-                var state = SpeechToText(_audioFile);
+
+
+                await SpeechToText(_audioFile);
+
                 var button = (Button)FindName("ButtonMic" + i + "Convert");
 
                 if (button != null)
                     button.IsEnabled = false;
             }
 
+            ProgressBarSpeechToText.IsIndeterminate = false;
             MessageBox.Show("Done 😊");
         }
 
         #region Utility Functions
 
-        private static bool SpeechToText(string path)
+        private static async Task SpeechToText(string path)
         {
             if (!File.Exists(path))
                 throw new InvalidOperationException("Audio file missing");
 
             try
             {
-                RunCmd(PythonExe, path);
+                await Task.Run(() => RunCmd(PythonExe, path));
             }
 
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-
-            return true;
         }
 
         private static void RunCmd(string fileName, string argument)
@@ -351,9 +364,11 @@ namespace LanguageProcessor
                 Password = null
             };
 
+
             using (var process = Process.Start(start))
             {
                 if (process == null) return;
+                process.WaitForExit();
 
                 using (var reader = process.StandardOutput)
                 {
@@ -374,8 +389,6 @@ namespace LanguageProcessor
                         {
                             sw.Write(_result + " ");
                         }
-
-                        //_completed = true;
                     }
 
                     catch (Exception ex)
@@ -423,6 +436,42 @@ namespace LanguageProcessor
             Directory.Delete(path);
         }
 
+        public byte[] ReadStream(NetworkStream ns)
+        {
+            int b;
+            var buffLength = "";
+            while ((b = ns.ReadByte()) != 4)
+            {
+                buffLength += (char)b;
+            }
+            var dataLength = Convert.ToInt32(buffLength);
+            var dataBuff = new byte[dataLength];
+            var byteOffset = 0;
+            while (byteOffset < dataLength)
+            {
+                var byteRead = ns.Read(dataBuff, byteOffset, dataLength - byteOffset);
+                byteOffset += byteRead;
+            }
+
+            return dataBuff;
+        }
+
+        private static byte[] CreateDataPacket(byte[] cmd, byte[] data)
+        {
+            var initialize = new byte[1];
+            initialize[0] = 2;
+            var separator = new byte[1];
+            separator[0] = 4;
+            var dataLength = Encoding.UTF8.GetBytes(Convert.ToString(data.Length));
+            var ms = new MemoryStream();
+            ms.Write(initialize, 0, initialize.Length);
+            ms.Write(cmd, 0, cmd.Length);
+            ms.Write(dataLength, 0, dataLength.Length);
+            ms.Write(separator, 0, separator.Length);
+            ms.Write(data, 0, data.Length);
+            return ms.ToArray();
+        }
+
         #endregion
 
         private void Window_Closed(object sender, EventArgs e)
@@ -436,6 +485,7 @@ namespace LanguageProcessor
                 MessageBox.Show("Unexpected Error occurred!" + exception.Message);
                 Environment.Exit(-1);
             }
+            Environment.Exit(0);
         }
     }
 

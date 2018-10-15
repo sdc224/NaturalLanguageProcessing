@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PresentationLayer"
         mc:Ignorable="d"
-        Title="Language Processor" Height="423.103" Width="840.013" Closed="Window_Closed">
+        Title="Language Processor" Height="444.405" Width="840.013" Closed="Window_Closed">
     <Viewbox Stretch="Uniform">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -99,11 +99,13 @@
                     <RowDefinition Height=".5*"/>
                     <RowDefinition Height=".5*"/>
                     <RowDefinition Height=".5*"/>
+                    <RowDefinition Height=".5*"/>
                 </Grid.RowDefinitions>
                 <Button x:Name="Create" Grid.Row="0" Content="Create" Margin="0,10,0,10" Click="Create_OnClick" Cursor="Hand" FontSize="24"/>
                 <Button x:Name="Connect" Grid.Row="1" Content="Connect" Margin="0,10,0,10" Click="Connect_OnClick" Cursor="Hand" FontSize="24"/>
-                <Button x:Name="SaveAll" Grid.Row="2" Content="Save All" Margin="0,10,0,10" FontSize="18" Click="SaveAll_Click"/>
-                <Button x:Name="GenerateRrf" Grid.Row="3" Margin="0,10,0,10">
+                <ProgressBar x:Name="ProgressBarSpeechToText" Grid.Row="2" Margin="0,10,0,10" Minimum="0" Maximum="100"/>
+                <Button x:Name="SaveAll" Grid.Row="3" Content="Save All" Margin="0,10,0,10" FontSize="18" Click="SaveAll_Click"/>
+                <Button x:Name="GenerateRrf" Grid.Row="4" Margin="0,10,0,10">
                     <TextBlock FontSize="20" Height="60" Width="112" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center">
                         Generate<LineBreak/>Document
                     </TextBlock>

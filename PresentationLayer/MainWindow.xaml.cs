@@ -24,18 +24,24 @@ namespace LanguageProcessor
         private WaveFileWriter _writer;
         private WaveFileReader _reader;
         private static readonly string Files = Directory.GetCurrentDirectory();
-        private static readonly string AudioFolder = Path.Combine(Files, "Audio");
         private static readonly string PythonFolder = Path.Combine(Files, "Python");
+        private static readonly string AudioFolder = Path.Combine(Files, "Audio");
+        private static readonly string TextFolder = Path.Combine(Files, "Text");
         private static string _audioFile;
         private static readonly string PythonExe = Path.Combine(PythonFolder, "audiototxt.exe");
         private static string _result;
         private readonly LanguageDbContext _context;
         private readonly GeoCoordinateWatcher _watcher;
         private static string _micUser;
+        private int _noOfUser;
+        private readonly int[] _enabledMic;
 
         public MainWindow()
         {
             _context = new LanguageDbContext();
+            _noOfUser = 0;
+            _enabledMic = new int[9];
+
             InitializeComponent();
 
             if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
@@ -59,6 +65,9 @@ namespace LanguageProcessor
 
             if (!Directory.Exists(AudioFolder))
                 Directory.CreateDirectory(AudioFolder);
+
+            if (!Directory.Exists(TextFolder))
+                Directory.CreateDirectory(TextFolder);
         }
 
         private void WaveIn_DataAvailable(object sender, WaveInEventArgs e)
@@ -83,7 +92,7 @@ namespace LanguageProcessor
             if (WaveIn.DeviceCount < 1)
                 throw new InvalidOperationException("No microphone");
 
-            _audioFile = Path.Combine(AudioFolder, $"{button.Name.Substring(6, 4)}audio.wav");
+            _audioFile = Path.Combine(AudioFolder, $"audio{button.Name[9]}.wav");
 
             if (File.Exists(_audioFile))
                 File.Delete(_audioFile);
@@ -153,6 +162,7 @@ namespace LanguageProcessor
 
             _waveIn.StopRecording();
 
+            _noOfUser++;
 
             switch (button.Name)
             {
@@ -160,41 +170,56 @@ namespace LanguageProcessor
                     ButtonMic1On.IsEnabled = true;
                     ButtonMic1Off.IsEnabled = false;
                     ButtonMic1Convert.IsEnabled = true;
+                    _enabledMic[1] = 1;
                     break;
 
                 case "ButtonMic2Off":
                     ButtonMic2On.IsEnabled = true;
                     ButtonMic2Off.IsEnabled = false;
+                    ButtonMic2Convert.IsEnabled = true;
+                    _enabledMic[2] = 1;
                     break;
 
                 case "ButtonMic3Off":
                     ButtonMic3On.IsEnabled = true;
                     ButtonMic3Off.IsEnabled = false;
+                    ButtonMic3Convert.IsEnabled = true;
+                    _enabledMic[3] = 1;
                     break;
 
                 case "ButtonMic4Off":
                     ButtonMic4On.IsEnabled = true;
                     ButtonMic4Off.IsEnabled = false;
+                    ButtonMic4Convert.IsEnabled = true;
+                    _enabledMic[4] = 1;
                     break;
 
                 case "ButtonMic5Off":
                     ButtonMic5On.IsEnabled = true;
                     ButtonMic5Off.IsEnabled = false;
+                    ButtonMic5Convert.IsEnabled = true;
+                    _enabledMic[5] = 1;
                     break;
 
                 case "ButtonMic6Off":
                     ButtonMic6On.IsEnabled = true;
                     ButtonMic6Off.IsEnabled = false;
+                    ButtonMic6Convert.IsEnabled = true;
+                    _enabledMic[6] = 1;
                     break;
 
                 case "ButtonMic7Off":
                     ButtonMic7On.IsEnabled = true;
                     ButtonMic7Off.IsEnabled = false;
+                    ButtonMic7Convert.IsEnabled = true;
+                    _enabledMic[7] = 1;
                     break;
 
                 case "ButtonMic8Off":
                     ButtonMic8On.IsEnabled = true;
                     ButtonMic8Off.IsEnabled = false;
+                    ButtonMic8Convert.IsEnabled = true;
+                    _enabledMic[8] = 1;
                     break;
 
                 default:
@@ -206,7 +231,7 @@ namespace LanguageProcessor
             _writer.Close();
             _writer = null;
 
-            _audioFile = Path.Combine(AudioFolder, $"{button.Name.Substring(6, 4)}audio.wav");
+            _audioFile = Path.Combine(AudioFolder, $"audio{button.Name[9]}.wav");
 
             _reader = new WaveFileReader(_audioFile);
             _waveOut.Init(_reader);
@@ -226,86 +251,19 @@ namespace LanguageProcessor
             if (!(sender is Button button))
                 return;
 
-            _audioFile = Path.Combine(AudioFolder, $"{button.Name.Substring(6, 4)}audio.wav");
+            _audioFile = Path.Combine(AudioFolder, $"audio{button.Name[9]}.wav");
 
-            if (File.Exists(_audioFile))
-            {
-                try
-                {
-                    RunCmd(PythonExe, _audioFile, button.Name);
-                }
+            if (SpeechToText(_audioFile))
+                MessageBox.Show("Done 😊");
 
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }
+            button.IsEnabled = false;
 
-                MessageBox.Show("Done :)");
+            /*var window = new ResultPage(button.Name);
 
-                /*var window = new ResultPage(button.Name);
-
-                window.RichTextBox.AppendText(_result);
-                window.Owner = this;
-                window.ShowDialog();*/
-                //Hide();
-                ButtonMic1Convert.IsEnabled = false;
-            }
-
-            else
-            {
-                throw new InvalidOperationException("Audio file missing");
-            }
-        }
-
-        private static void RunCmd(string fileName, string argument, string buttonName)
-        {
-            if (fileName == null) throw new ArgumentNullException(nameof(fileName));
-            if (argument == null) throw new ArgumentNullException(nameof(argument));
-
-            var start = new ProcessStartInfo
-            {
-                FileName = "\"" + fileName + "\"",     //cmd is full path to python.exe
-                Arguments = "\"" + argument + "\"",   //args is path to .py file and any cmd line args
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                CreateNoWindow = true,
-                UserName = string.Empty,
-                Password = null
-            };
-
-            using (var process = Process.Start(start))
-            {
-                if (process == null) return;
-
-                using (var reader = process.StandardOutput)
-                {
-                    _result = reader.ReadToEnd();
-
-                    var newFile = Path.Combine(Files, _micUser + ".txt");
-
-                    try
-                    {
-                        // Check if file already exists. If yes, delete it. 
-                        if (File.Exists(newFile))
-                        {
-                            File.Delete(newFile);
-                        }
-
-                        // Create a new file 
-                        using (var sw = File.CreateText(newFile))
-                        {
-                            sw.Write(_result + " ");
-                        }
-
-                        //_completed = true;
-                    }
-
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.ToString());
-                    }
-                }
-            }
+            window.RichTextBox.AppendText(_result);
+            window.Owner = this;
+            window.ShowDialog();*/
+            //Hide();
         }
 
         private void Create_OnClick(object sender, RoutedEventArgs e)
@@ -338,6 +296,96 @@ namespace LanguageProcessor
             MessageBox.Show("Removed");
         }
 
+        private void SaveAll_Click(object sender, RoutedEventArgs e)
+        {
+            for (var i = 1; i < _enabledMic.Length; i++)
+            {
+                if (_enabledMic[i] != 1)
+                    continue;
+
+                _audioFile = Path.Combine(AudioFolder, $"audio{i}.wav");
+                _micUser = $"Mic{i}";
+                var state = SpeechToText(_audioFile);
+                var button = (Button)FindName("ButtonMic" + i + "Convert");
+
+                if (button != null)
+                    button.IsEnabled = false;
+            }
+
+            MessageBox.Show("Done 😊");
+        }
+
+        #region Utility Functions
+
+        private static bool SpeechToText(string path)
+        {
+            if (!File.Exists(path))
+                throw new InvalidOperationException("Audio file missing");
+
+            try
+            {
+                RunCmd(PythonExe, path);
+            }
+
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            return true;
+        }
+
+        private static void RunCmd(string fileName, string argument)
+        {
+            if (fileName == null) throw new ArgumentNullException(nameof(fileName));
+            if (argument == null) throw new ArgumentNullException(nameof(argument));
+
+            var start = new ProcessStartInfo
+            {
+                FileName = "\"" + fileName + "\"",     //cmd is full path to python.exe
+                Arguments = "\"" + argument + "\"",   //args is path to .py file and any cmd line args
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true,
+                UserName = string.Empty,
+                Password = null
+            };
+
+            using (var process = Process.Start(start))
+            {
+                if (process == null) return;
+
+                using (var reader = process.StandardOutput)
+                {
+                    _result = reader.ReadToEnd();
+
+                    var newFile = Path.Combine(TextFolder, _micUser + ".txt");
+
+                    try
+                    {
+                        // Check if file already exists. If yes, delete it. 
+                        if (File.Exists(newFile))
+                        {
+                            File.Delete(newFile);
+                        }
+
+                        // Create a new file 
+                        using (var sw = File.CreateText(newFile))
+                        {
+                            sw.Write(_result + " ");
+                        }
+
+                        //_completed = true;
+                    }
+
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                    }
+                }
+            }
+        }
+
         private static int RandomNumber(int min, int max)
         {
             var random = new Random();
@@ -355,6 +403,39 @@ namespace LanguageProcessor
                 }
             }
             throw new Exception("No network adapters with an IPv4 address in the system!");
+        }
+
+        private static void DeleteDirectory(string path)
+        {
+            if (!Directory.Exists(path)) return;
+            var di = new DirectoryInfo(path);
+
+            foreach (var file in di.GetFiles())
+            {
+                file.Delete();
+            }
+
+            foreach (var dir in di.GetDirectories())
+            {
+                dir.Delete(true);
+            }
+
+            Directory.Delete(path);
+        }
+
+        #endregion
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            try
+            {
+                DeleteDirectory(AudioFolder);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show("Unexpected Error occurred!" + exception.Message);
+                Environment.Exit(-1);
+            }
         }
     }
 

@@ -10,6 +10,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,6 +24,10 @@ namespace LanguageProcessor
     /// </summary>
     public partial class MainWindow : Window
     {
+        // To check for internet
+        [DllImport("wininet.dll")]
+        private static extern bool InternetGetConnectedState(out int description, int reservedValue);
+
         private WaveIn _waveIn;
         private WaveOut _waveOut;
         private WaveFileWriter _writer;
@@ -36,7 +41,6 @@ namespace LanguageProcessor
         private static string _result;
         private readonly LanguageDbContext _context;
         private readonly GeoCoordinateWatcher _watcher;
-        private static string _micUser;
         private int _noOfUser;
         private readonly int[] _enabledMic;
 
@@ -49,7 +53,7 @@ namespace LanguageProcessor
             InitializeComponent();
             DataContext = this;
 
-            if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+            if (!InternetGetConnectedState(out var desc, 0))
             {
                 MessageBox.Show("Your computer is not connected to internet....");
                 Application.Current.Shutdown(-1);
@@ -111,49 +115,41 @@ namespace LanguageProcessor
                 case "ButtonMic1On":
                     ButtonMic1Off.IsEnabled = true;
                     ButtonMic1On.IsEnabled = false;
-                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 case "ButtonMic2On":
                     ButtonMic2Off.IsEnabled = true;
                     ButtonMic2On.IsEnabled = false;
-                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 case "ButtonMic3On":
                     ButtonMic3Off.IsEnabled = true;
                     ButtonMic3On.IsEnabled = false;
-                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 case "ButtonMic4On":
                     ButtonMic4Off.IsEnabled = true;
                     ButtonMic4On.IsEnabled = false;
-                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 case "ButtonMic5On":
                     ButtonMic5Off.IsEnabled = true;
                     ButtonMic5On.IsEnabled = false;
-                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 case "ButtonMic6On":
                     ButtonMic6Off.IsEnabled = true;
                     ButtonMic6On.IsEnabled = false;
-                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 case "ButtonMic7On":
                     ButtonMic7Off.IsEnabled = true;
                     ButtonMic7On.IsEnabled = false;
-                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 case "ButtonMic8On":
                     ButtonMic8Off.IsEnabled = true;
                     ButtonMic8On.IsEnabled = false;
-                    _micUser = button.Name.Substring(6, 4);
                     break;
 
                 default:
@@ -256,10 +252,16 @@ namespace LanguageProcessor
             if (!(sender is Button button))
                 return;
 
-            _audioFile = Path.Combine(AudioFolder, $"audio{button.Name[9]}.wav");
+            // To find out the grid related to the button
+            var frameWorkElement = ((FrameworkElement)sender).Parent;
+            var name = frameWorkElement.GetValue(NameProperty).ToString();
+            var index = name[name.Length - 1].ToString();
+
+            _audioFile = Path.Combine(AudioFolder, $"audio{index}.wav");
             ProgressBarSpeechToText.IsIndeterminate = true;
 
-            await SpeechToText(_audioFile);
+            await SpeechToText(_audioFile, index);
+            _enabledMic[int.Parse(index)] = 0;
 
             ProgressBarSpeechToText.IsIndeterminate = false;
             button.IsEnabled = false;
@@ -315,15 +317,18 @@ namespace LanguageProcessor
                     continue;
 
                 _audioFile = Path.Combine(AudioFolder, $"audio{i}.wav");
-                _micUser = $"Mic{i}";
 
+                var buttonOn = (Button)FindName("ButtonMic" + i + "On");
 
-                await SpeechToText(_audioFile);
+                if (buttonOn != null)
+                    buttonOn.IsEnabled = false;
 
-                var button = (Button)FindName("ButtonMic" + i + "Convert");
+                await SpeechToText(_audioFile, i.ToString());
 
-                if (button != null)
-                    button.IsEnabled = false;
+                var buttonConvert = (Button)FindName("ButtonMic" + i + "Convert");
+
+                if (buttonConvert != null)
+                    buttonConvert.IsEnabled = false;
             }
 
             ProgressBarSpeechToText.IsIndeterminate = false;
@@ -332,14 +337,14 @@ namespace LanguageProcessor
 
         #region Utility Functions
 
-        private static async Task SpeechToText(string path)
+        private static async Task SpeechToText(string path, string index)
         {
             if (!File.Exists(path))
                 throw new InvalidOperationException("Audio file missing");
 
             try
             {
-                await Task.Run(() => RunCmd(PythonExe, path));
+                await Task.Run(() => RunCmd(PythonExe, path, index));
             }
 
             catch (Exception ex)
@@ -348,7 +353,7 @@ namespace LanguageProcessor
             }
         }
 
-        private static void RunCmd(string fileName, string argument)
+        private static void RunCmd(string fileName, string argument, string index)
         {
             if (fileName == null) throw new ArgumentNullException(nameof(fileName));
             if (argument == null) throw new ArgumentNullException(nameof(argument));
@@ -374,7 +379,7 @@ namespace LanguageProcessor
                 {
                     _result = reader.ReadToEnd();
 
-                    var newFile = Path.Combine(TextFolder, _micUser + ".txt");
+                    var newFile = Path.Combine(TextFolder, $"Mic{index}.txt");
 
                     try
                     {
@@ -490,59 +495,71 @@ namespace LanguageProcessor
     }
 
     /*private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+    {
+        // Get the subdirectories for the specified directory.
+        var dir = new DirectoryInfo(sourceDirName);
+
+        if (!dir.Exists)
         {
-            // Get the subdirectories for the specified directory.
-            var dir = new DirectoryInfo(sourceDirName);
+            throw new DirectoryNotFoundException("Source directory does not exist or could not be found: " + sourceDirName);
+        }
 
-            if (!dir.Exists)
+        var dirs = dir.GetDirectories();
+        // If the destination directory doesn't exist, create it.
+        if (!Directory.Exists(destDirName))
+        {
+            Directory.CreateDirectory(destDirName);
+        }
+
+        // Get the files in the directory and copy them to the new location.
+        var files = dir.GetFiles();
+        foreach (var file in files)
+        {
+            var tempPath = Path.Combine(destDirName, file.Name);
+            file.CopyTo(tempPath, false);
+        }
+
+        // If copying subdirectories, copy them and their contents to new location.
+        if (!copySubDirs) return;
+        foreach (var subDir in dirs)
+        {
+            var tempPath = Path.Combine(destDirName, subDir.Name);
+            DirectoryCopy(subDir.FullName, tempPath, true);
+        }
+    }
+
+    private static string GetParents(object element, int parentLevel)
+    {
+        var returnValue = $"[{parentLevel}] {element.GetType()}";
+        if (!(element is FrameworkElement frameworkElement) || parentLevel == 2)
+            return returnValue;
+
+        if (frameworkElement.Parent != null)
+            returnValue += $"{Environment.NewLine}{GetParents(frameworkElement.Parent, parentLevel + 1)}";
+
+        return returnValue;
+    }
+
+    private static string LocateExe(string filename)
+    {
+        var path = Environment.GetEnvironmentVariable("path");
+        if (path == null) return string.Empty;
+        var folders = path.Split(';');
+        foreach (var folder in folders)
+        {
+            if (File.Exists(folder + filename))
             {
-                throw new DirectoryNotFoundException("Source directory does not exist or could not be found: " + sourceDirName);
+                return folder + filename;
             }
 
-            var dirs = dir.GetDirectories();
-            // If the destination directory doesn't exist, create it.
-            if (!Directory.Exists(destDirName))
+            if (File.Exists(folder + "\\" + filename))
             {
-                Directory.CreateDirectory(destDirName);
-            }
-
-            // Get the files in the directory and copy them to the new location.
-            var files = dir.GetFiles();
-            foreach (var file in files)
-            {
-                var tempPath = Path.Combine(destDirName, file.Name);
-                file.CopyTo(tempPath, false);
-            }
-
-            // If copying subdirectories, copy them and their contents to new location.
-            if (!copySubDirs) return;
-            foreach (var subDir in dirs)
-            {
-                var tempPath = Path.Combine(destDirName, subDir.Name);
-                DirectoryCopy(subDir.FullName, tempPath, true);
+                return folder + "\\" + filename;
             }
         }
 
-        private static string LocateExe(string filename)
-        {
-            var path = Environment.GetEnvironmentVariable("path");
-            if (path == null) return string.Empty;
-            var folders = path.Split(';');
-            foreach (var folder in folders)
-            {
-                if (File.Exists(folder + filename))
-                {
-                    return folder + filename;
-                }
-
-                if (File.Exists(folder + "\\" + filename))
-                {
-                    return folder + "\\" + filename;
-                }
-            }
-
-            return string.Empty;
-        }*/
+        return string.Empty;
+    }*/
 
     /*private static void RecognizerOnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
     {

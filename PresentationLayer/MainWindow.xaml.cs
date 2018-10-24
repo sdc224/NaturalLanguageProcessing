@@ -1,4 +1,6 @@
-﻿using LanguageProcessor.Model;
+﻿using ESCommon.Rtf;
+using LanguageProcessor.Model;
+using LanguageProcessor.Rtf;
 using LanguageProcessor.Server;
 using LanguageProcessor.ViewModel;
 using NAudio.Wave;
@@ -276,6 +278,8 @@ namespace LanguageProcessor
 
         private void Create_OnClick(object sender, RoutedEventArgs e)
         {
+            ButtonConnect.IsEnabled = false;
+
             var time = DateTime.Now.Ticks;
             var ipAddress = IPAddress.Parse(GetLocalIpAddress());
             var intIp = BitConverter.ToInt32(ipAddress.GetAddressBytes(), 0);
@@ -302,6 +306,8 @@ namespace LanguageProcessor
 
         private void Connect_OnClick(object sender, RoutedEventArgs e)
         {
+            ButtonCreate.IsEnabled = false;
+
             _context.Users.Remove(_context.Users.ToList().Last());
             _context.SaveChanges();
             MessageBox.Show("Removed");
@@ -333,6 +339,35 @@ namespace LanguageProcessor
 
             ProgressBarSpeechToText.IsIndeterminate = false;
             MessageBox.Show("Done 😊");
+        }
+
+        private void GenerateRrf_Click(object sender, RoutedEventArgs e)
+        {
+            var directory = new DirectoryInfo("Text");
+            if (!directory.Exists)
+            {
+                MessageBox.Show("Please press the Save All or Convert button first...");
+                Environment.Exit(-1);
+            }
+
+            var report = new Report(TextFolder);
+            var rtf = report.GetRtf();
+            var rtfWriter = new RtfWriter();
+
+            try
+            {
+                if (File.Exists("test.rtf"))
+                    File.Delete("test.rtf");
+
+                using (TextWriter writer = new StreamWriter("test.rtf"))
+                {
+                    rtfWriter.Write(writer, rtf);
+                }
+            }
+            catch (IOException)
+            {
+                MessageBox.Show("I/O Exception");
+            }
         }
 
         #region Utility Functions

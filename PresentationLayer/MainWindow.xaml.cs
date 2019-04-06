@@ -432,15 +432,7 @@ namespace LanguageProcessor
             Directory.Delete(path);
         }
 
-        private void Create_OnClick(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private static byte[] CreateDataPacket(byte[] cmd, byte[] data)
-        {
-
-        }
+        #endregion
     }
 
     /*private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)

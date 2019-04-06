@@ -1,8 +1,14 @@
-﻿using NAudio.Wave;
+﻿using LanguageProcessor.Model;
+using LanguageProcessor.ViewModel;
+using NAudio.Wave;
 using System;
+using System.Device.Location;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -23,15 +29,26 @@ namespace LanguageProcessor
         private static readonly string AudioFile = Path.Combine(AudioFolder, "audio.wav");
         private static readonly string PythonExe = Path.Combine(PythonFolder, "audiototxt.exe");
         private static string _result;
+        private readonly LanguageDbContext _context;
+        private readonly GeoCoordinateWatcher _watcher;
 
         public MainWindow()
         {
+            _context = new LanguageDbContext();
             InitializeComponent();
+
+            if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+            {
+                MessageBox.Show("Your computer is not connected to internet....");
+                Application.Current.Shutdown(-1);
+            }
+
             _waveOut = new WaveOut();
             _waveIn = new WaveIn();
 
             _waveIn.DataAvailable += WaveIn_DataAvailable;
             _waveIn.WaveFormat = new WaveFormat(16000, 1);
+            _watcher = new GeoCoordinateWatcher();
 
             Console.WriteLine(Files);
             var zipPath = Files + @"\Python.zip";
@@ -276,12 +293,51 @@ namespace LanguageProcessor
 
         private void Create_OnClick(object sender, RoutedEventArgs e)
         {
+            var time = DateTime.Now.Ticks;
+            var ipAddress = IPAddress.Parse(GetLocalIpAddress());
+            var intIp = BitConverter.ToInt32(ipAddress.GetAddressBytes(), 0);
+            var combineId = (time << 32) + intIp;
 
+            _context.Users.Local.Add(new User
+            {
+                Id = combineId,
+                Name = Environment.MachineName,
+                Time = DateTime.Now.ToUniversalTime(),
+                Location = _watcher.Position.Location.ToString(),
+                HostName = Dns.GetHostName(),
+                IpAddress = GetLocalIpAddress()
+            });
+            _context.SaveChanges();
+
+            var data = _context.Users.ToList().Last();
+            MessageBox.Show(
+                $"Your id is {data.Id}\nName {data.Name}\nTime {data.Time}\nLocation {data.Location}\nHostname {data.HostName}\nIp Address {data.IpAddress}");
         }
 
         private void Connect_OnClick(object sender, RoutedEventArgs e)
         {
+            _context.Users.Remove(_context.Users.ToList().Last());
+            _context.SaveChanges();
+            MessageBox.Show("Removed");
+        }
 
+        private static int RandomNumber(int min, int max)
+        {
+            var random = new Random();
+            return random.Next(min, max);
+        }
+
+        private static string GetLocalIpAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
         }
     }
 

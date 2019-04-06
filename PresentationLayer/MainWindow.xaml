@@ -12,7 +12,7 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <StackPanel HorizontalAlignment="Left" Height="362" Margin="10,10,0,0" VerticalAlignment="Top" Width="339">
+        <StackPanel x:Name="StackPanel1" HorizontalAlignment="Left" Height="362" Margin="10,10,0,0" VerticalAlignment="Top" Width="339">
             <StackPanel Height="91" Margin="0,0,0,0" Orientation="Horizontal">
                 <Label x:Name="Mic1" Content="Mic 1" Margin="0,16,0,26.667" Width="99" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Height="48" RenderTransformOrigin="0.563,0.574"/>
                 <Button x:Name="ButtonMic1On" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">
@@ -58,7 +58,7 @@
             <Button x:Name="Connect" Content="Connect" Margin="0,198,1,86" Click="Connect_OnClick" Cursor="Hand" FontSize="24"/>
 
         </Grid>
-        <StackPanel Grid.Column="2" Height="362" Margin="10,10,5,5" VerticalAlignment="Top">
+        <StackPanel x:Name="StackPanel2" Grid.Column="2" Height="362" Margin="10,10,5,5" VerticalAlignment="Top">
             <StackPanel Height="91" Margin="0,0,9.667,0" Orientation="Horizontal">
                 <Label x:Name="Mic5" Content="Mic 5" Margin="0,16,0,26.667" Width="99" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <Button x:Name="ButtonMic5On" Margin="10,10,10,9.667" Width="61" Click="ButtonStartOn_Click" Cursor="Hand">

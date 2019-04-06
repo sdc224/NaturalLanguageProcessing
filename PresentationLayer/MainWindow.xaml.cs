@@ -42,10 +42,6 @@ namespace LanguageProcessor
 
         public MainWindow()
         {
-            _context = new LanguageDbContext();
-            _noOfUser = 0;
-            _enabledMic = new int[9];
-
             InitializeComponent();
             DataContext = this;
 
@@ -436,56 +432,14 @@ namespace LanguageProcessor
             Directory.Delete(path);
         }
 
-        public byte[] ReadStream(NetworkStream ns)
+        private void Create_OnClick(object sender, RoutedEventArgs e)
         {
-            int b;
-            var buffLength = "";
-            while ((b = ns.ReadByte()) != 4)
-            {
-                buffLength += (char)b;
-            }
-            var dataLength = Convert.ToInt32(buffLength);
-            var dataBuff = new byte[dataLength];
-            var byteOffset = 0;
-            while (byteOffset < dataLength)
-            {
-                var byteRead = ns.Read(dataBuff, byteOffset, dataLength - byteOffset);
-                byteOffset += byteRead;
-            }
 
-            return dataBuff;
         }
 
         private static byte[] CreateDataPacket(byte[] cmd, byte[] data)
         {
-            var initialize = new byte[1];
-            initialize[0] = 2;
-            var separator = new byte[1];
-            separator[0] = 4;
-            var dataLength = Encoding.UTF8.GetBytes(Convert.ToString(data.Length));
-            var ms = new MemoryStream();
-            ms.Write(initialize, 0, initialize.Length);
-            ms.Write(cmd, 0, cmd.Length);
-            ms.Write(dataLength, 0, dataLength.Length);
-            ms.Write(separator, 0, separator.Length);
-            ms.Write(data, 0, data.Length);
-            return ms.ToArray();
-        }
 
-        #endregion
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            try
-            {
-                DeleteDirectory(AudioFolder);
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show("Unexpected Error occurred!" + exception.Message);
-                Environment.Exit(-1);
-            }
-            Environment.Exit(0);
         }
     }
 

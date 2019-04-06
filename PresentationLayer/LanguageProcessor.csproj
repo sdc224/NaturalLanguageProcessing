@@ -96,6 +96,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Migrations\201810020836478_InitialModel.cs" />
+    <Compile Include="Migrations\201810020836478_InitialModel.Designer.cs">
+      <DependentUpon>201810020836478_InitialModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="ResultPage.xaml.cs">
       <DependentUpon>ResultPage.xaml</DependentUpon>
@@ -133,6 +138,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Migrations\201810020836478_InitialModel.resx">
+      <DependentUpon>201810020836478_InitialModel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
